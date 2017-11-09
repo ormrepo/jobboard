@@ -14,3 +14,17 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::group(['prefix' => 'api'], function () {
+
+    Route::get('jobs', 'Api\JobsController@index');
+
+    Route::get('jobs/{job}', 'Api\JobsController@show');
+
+    Route::post('jobs','Api\JobsController@store');
+
+    Route::patch('jobs/{jobs}','Api\JobsController@update');
+
+    Route::delete('jobs/{job}', 'Api\JobsController@delete');
+});
