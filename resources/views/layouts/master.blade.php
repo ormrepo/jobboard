@@ -15,28 +15,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script type="text/javascript">
+
     Vue.prototype.$http = axios;
 
     Vue.component('job' , {
         template: "#template-job-raw",
         props:  ['job' ],
         methods: {
-            createJob: function () {
-                var newJob = {
-                    reference: "",
-                    employer: "",
-                    title: "",
-                    location: "",
-                    salary: 0,
-                    post_date: "",
-                    type: "",
-                    description: "",
-                    editing: true
-                };
-                this.jobs.push(newJob);
-            },
-
-
             deleteJob: function (job) {
                 var index = this.$parent.jobs.indexOf(job);
                 this.$parent.jobs.splice(index, 1)
@@ -55,21 +40,20 @@
 
             storeJob: function (job) {
                 axios.post('/api/jobs/', job).then(function (response) {
-                    /*
-                    After the the new job is stored in the database fetch again all jobs with
-                    vm.fetchJobs();
-                    Or Better, update the id of the created job
-                    */
+
                     Vue.set(job, 'id', response.data.id);
 
                     //Set editing to false to show actions again and hide the inputs
                     job.editing = false;
                 });
-            },
+
+
+            }
         }
+
     })
 
-    new Vue({
+    var  vm = new  Vue({
         el: '#app' ,
         data:  {
             jobs: [],
@@ -78,25 +62,47 @@
         mounted: function (){
             this.fetchJobs()
         },
+        methods: {
+            createJob: function () {
+                var newJob = {
+                    reference: "",
+                    employer: "",
+                    title: "",
+                    location: "",
+                    salary: 0,
+                    post_date: "",
+                    type: "",
+                    description: "",
+                    editing: true
+                };
+                this.jobs.push(newJob);
+            },
 
-        fetchJobs: function() {
-            var vm = this;
-            this.axios.get('/api/jobs')
-                .then(function (response) {
-                    // set data on vm
-                    var jobsReady = response.data.map(function (job) {
-                        job.editing = false;
-                        return job
-                    })
-                    Vue.set(vm, 'jobs', jobsReady)
-                });
+            fetchJobs: function() {
+                var vm = this;
+                axios.get('/api/jobs')
+                    .then(function (response) {
+                        // set data on vm
+                        var jobsReady = response.data.map(function (job) {
+                            job.editing = false;
+                            return job
+                        })
+                        Vue.set(vm, 'jobs', jobsReady)
+                    });
             }
-
-
-    });
-
-
+        }
+    })
 </script>
+
+
+
+
+
+
+
+
+
+
 
 
 
